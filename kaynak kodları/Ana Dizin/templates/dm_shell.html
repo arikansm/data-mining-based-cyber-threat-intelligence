@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
+
+    <link href="{{ url_for('static', filename='page_sources/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/web-fonts-with-css/css/fontawesome-all.css') }}" rel="stylesheet">
+
+    <title>Veri Madenciliği Temelli Siber Tehdit İstihbaratı</title>
+    <script>
+    	var control = false;
+    	function get_shell(){
+    		var ip = get_ip()
+    		if(control){
+    			document.getElementById('shell').src = ip;
+    		}
+    		else{
+		    	var output = document.getElementById('output');
+		    	output.innerHTML += '<iframe id="shell" src="'+ip+'" style="border:none;width:100%;height:75vh"></iframe>';
+		    	control = true;
+	    	}
+    	}
+
+      function encode64(inputStr){
+             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+             var outputStr = "";
+             var i = 0;
+             
+             while (i<inputStr.length){
+                var byte1 = inputStr.charCodeAt(i++) & 0xff;
+                var byte2 = inputStr.charCodeAt(i++) & 0xff;
+                var byte3 = inputStr.charCodeAt(i++) & 0xff;
+
+                var enc1 = byte1 >> 2;
+                var enc2 = ((byte1 & 3) << 4) | (byte2 >> 4);
+                
+                var enc3, enc4;
+                if (isNaN(byte2)){
+            enc3 = enc4 = 64;
+                } else{
+                  enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
+                  if (isNaN(byte3)){
+                     enc4 = 64;
+                  } else {
+                      enc4 = byte3 & 63;
+                  }
+                }
+                outputStr +=  b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4);
+             } 
+             return outputStr;
+          }
+
+      function get_tree(tree){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/dm/tree/" + tree, false ); // false for synchronous request
+        xmlHttp.setRequestHeader("cache-control", "private");
+        xmlHttp.overrideMimeType('text/plain; charset=x-user-defined');
+        xmlHttp.send( null );
+        var image = document.getElementById('tree_output');
+        if (xmlHttp.status == 200){
+          document.getElementById('treeModalLabel').innerHTML = "Öğrenilmiş Ağaç";
+          document.getElementById('download_button').style.display = "block"
+          image.style.display = "block";
+          image.src = "data:image/png;base64," + encode64(xmlHttp.responseText);
+        }
+        else if (xmlHttp.status == 404){
+          document.getElementById('treeModalLabel').innerHTML = "Ağaç oluşturulmamış!";
+          image.style.display = "none";
+          document.getElementById('download_button').style.display = "none"
+        }
+        else{
+          document.getElementById('treeModalLabel').innerHTML = "Bir hata ile karşılaşıldı!";
+          image.style.display = "none";
+          document.getElementById('download_button').style.display = "none"
+        }
+      }
+
+      function get_id3(){
+        get_tree("Id3");
+      }
+
+      function get_cart(){
+        get_tree("Cart");
+      }
+
+      function get_nsl_id3(){
+        get_tree("nsl_id3");
+      }
+
+      function get_nsl_cart(){
+        get_tree("nsl_cart");
+      }
+
+    	function get_ip(){
+  			var xmlHttp = new XMLHttpRequest();
+  	    xmlHttp.open( "GET", "/dm/ip", false ); // false for synchronous request
+  	    xmlHttp.send( null );
+  	    return xmlHttp.responseText;
+    	}
+      function download_tree(){
+        var img = document.getElementById("tree_output");
+        // atob to base64_decode the data-URI
+        var image_data = atob(img.src.split(',')[1]);
+        // Use typed arrays to convert the binary data to a Blob
+        var arraybuffer = new ArrayBuffer(image_data.length);
+        var view = new Uint8Array(arraybuffer);
+        for (var i=0; i<image_data.length; i++) {
+            view[i] = image_data.charCodeAt(i) & 0xff;
+        }
+        try {
+            // This is the recommended method:
+            var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
+        } catch (e) {
+            // The BlobBuilder API has been deprecated in favour of Blob, but older
+            // browsers don't know about the Blob constructor
+            // IE10 also supports BlobBuilder, but since the `Blob` constructor
+            //  also works, there's no need to add `MSBlobBuilder`.
+            var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+            bb.append(arraybuffer);
+            var blob = bb.getBlob('application/octet-stream'); // <-- Here's the Blob
+        }
+        
+        var a = document.createElement("a");
+         
+        // Use the URL object to create a temporary URL
+        var url = (window.webkitURL || window.URL).createObjectURL(blob);
+        a.href = url;
+        a.download = "agac.png";
+        a.click();       
+      }
+    </script>
+  </head>
+  <body cz-shortcut-listen="true" style="">
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a style="text-align: center;" class="navbar-brand col-md-12 mr-0" href="/">Veri Madenciliği Temelli Siber Tehdit İstihbaratı</a>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <i class="fa fa-home"></i>
+                  &nbsp;Anasayfa
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/dm">
+                  <i class="fa fa-cogs"></i>
+                  &nbsp;Saldırı Tespit Sistemi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/db">
+                  <i class="fa fa-database"></i>
+                  &nbsp;Bilinmeyen Saldırı Kayıtları
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/traffic">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Gerçek Trafik Kayıtları
+                </a>
+              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/reports">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Siber Tehdit İstihbaratları
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+        <!-- Modal -->
+          <div class="modal fade" id="treeModal" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="treeModalLabel">Ağaç</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <center><img id='tree_output' style="height:100px; width=100px"></center>
+                </div>
+                <div class="modal-footer">
+                 <button id = "download_button" type="button" class="btn btn-success" onclick="download_tree()">Resmi İndir</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Saldırı Tespit Sistemi</h1>
+            <div class="btn-group">
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                Ağaçlar <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a class="btn" onclick="get_id3()" data-toggle="modal" data-target="#treeModal">ID3 Öğrenilmiş Ağaç</a></li>
+                  <li><a class="btn" onclick="get_cart()" data-toggle="modal" data-target="#treeModal">CART Öğrenilmiş Ağaç</a></li>
+                  <li><a class="btn" onclick="get_nsl_id3()" data-toggle="modal" data-target="#treeModal">ID3 Öğrenilmiş Ağaç (NSL)</a></li>
+                  <li><a class="btn" onclick="get_nsl_cart()" data-toggle="modal" data-target="#treeModal">CART Öğrenilmiş Ağaç (NSL)</a></li>
+                </ul>
+              </div>
+              <button type="button" class="btn btn-success" onclick="get_shell()">Saldırı tespit sistemine bağlan</button>
+            </div>
+          </div>
+          <div id="output" style="background:black;width:100%;height:80vh">
+          </div>
+        </main>
+      </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='page_sources/jquery-3.2.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/bootstrap.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='page_sources/Chart.min.js') }}"></script>

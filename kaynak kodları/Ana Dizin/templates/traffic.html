@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="{{ url_for('static', filename='page_sources/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/web-fonts-with-css/css/fontawesome-all.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='page_sources/jquery.dataTables.min.css') }}" rel="stylesheet">
+    
+  	<style>
+      	/* Center the loader */
+        #overlay {
+          background-color: rgba(0, 0, 0, 0.8);
+          z-index: 998;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          display: none;
+        }
+      	#loader {
+      	  position: absolute;
+      	  left: 50%;
+      	  top: 50%;
+      	  z-index: 999;
+      	  width: 150px;
+      	  height: 150px;
+      	  margin: -75px 0 0 -75px;
+      	  border: 16px solid #f3f3f3;
+      	  border-radius: 50%;
+      	  border-top: 16px solid #3498db;
+      	  width: 120px;
+      	  height: 120px;
+      	  -webkit-animation: spin 2s linear infinite;
+      	  animation: spin 2s linear infinite;
+      	}
+
+      	@-webkit-keyframes spin {
+      	  0% { -webkit-transform: rotate(0deg); }
+      	  100% { -webkit-transform: rotate(360deg); }
+      	}
+
+      	@keyframes spin {
+      	  0% { transform: rotate(0deg); }
+      	  100% { transform: rotate(360deg); }
+      	}
+
+      	/* Add animation to "page content" */
+      	.animate-bottom {
+      	  position: relative;
+      	  -webkit-animation-name: animatebottom;
+      	  -webkit-animation-duration: 1s;
+      	  animation-name: animatebottom;
+      	  animation-duration: 1s
+      	}
+
+      	@-webkit-keyframes animatebottom {
+      	  from { bottom:-100px; opacity:0 } 
+      	  to { bottom:0px; opacity:1 }
+      	}
+
+      	@keyframes animatebottom { 
+      	  from{ bottom:-100px; opacity:0 } 
+      	  to{ bottom:0; opacity:1 }
+      	}
+
+      	#report_div {
+      	  display: none;
+      	  text-align: center;
+      	}
+  	</style>
+
+    <script src="{{ url_for('static', filename='page_sources/jquery-3.2.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/Chart.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='page_sources/jquery-1.12.4.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='page_sources/jquery.dataTables.min.js') }}"></script>
+
+    <script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+		    $('#data_table').DataTable( {
+		        "processing": true,
+		        "serverSide": true,
+		        "ordering": false,
+		        "searching": false,
+		        "scrollX": true,
+		          "language": {
+		          	"lengthMenu": "Her sayfada _MENU_ adet kayıt gösteriliyor.",
+		          	"processing": "Kayıtlar veri tabanı sunucusundan getiriliyor...",
+		          	"info": "Toplam _TOTAL_ kayıt içinden _START_ - _END_ aralığı gösteriliyor.",
+					"paginate": {
+  						"previous": "Geri",
+  						"next": "İleri",
+					}
+					},
+		        "ajax": "/traffics"
+		    } );
+		} );
+
+		function report_request() {
+		  var xhttp = new XMLHttpRequest();
+		  xhttp.onreadystatechange = function() {
+		    if (this.readyState == 4 && this.status == 200) {
+		      show_report(this.responseText);
+		    }
+		  };
+		  xhttp.open("GET", "/generate_report", true);
+		  xhttp.send();
+		}
+
+		function show_report(report_name){
+		  document.getElementById("report_link_txt").setAttribute("href", "/generated_report/" + report_name + ".txt");
+		  document.getElementById("report_link_json").setAttribute("href", "/generated_report/" + report_name + ".json");
+		  document.getElementById("loader").style.display = "none";
+		  document.getElementById("report_div").style.display = "block";
+		}
+	</script>
+
+    <title>Veri Madenciliği Temelli Siber Tehdit İstihbaratı</title>
+    <script>
+      function create_report(){
+        $("#overlay").show();
+        document.getElementById("loader").style.display = "block";
+        report_request();
+      }
+
+      function close_modal(){
+        $("#overlay").hide();
+        document.getElementById("report_div").style.display = "none";
+      }
+    </script>
+  </head>
+
+  <body cz-shortcut-listen="true" style="">
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a style="text-align: center;" class="navbar-brand col-md-12 mr-0" href="/">Veri Madenciliği Temelli Siber Tehdit İstihbaratı</a>
+    </nav>
+<div id="overlay"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <i class="fa fa-home"></i>
+                  &nbsp;Anasayfa
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/dm">
+                  <i class="fa fa-cogs"></i>
+                  &nbsp;Saldırı Tespit Sistemi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/db">
+                  <i class="fa fa-database"></i>
+                  &nbsp;Bilinmeyen Saldırı Kayıtları
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/traffic">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Gerçek Trafik Kayıtları
+                </a>
+              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/reports">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Siber Tehdit İstihbaratları
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Gerçek Trafik Kayıtları</h1>
+            <button type="button" class="btn btn-success" onclick="create_report()">Siber tehdit istihbaratı oluştur</button>
+          </div>
+<div id="output">
+</div>
+<div id="loader" style="display:none;"></div>
+<div style="display:none;z-index: 999;background-color: white" id="report_div" class="animate-bottom">
+  <br><h2>Siber tehdit istihbaratı oluşturuldu!</h2>
+  <br>
+  <p> Bazı tarayıcılar uzun dosyaların tamamını göstermeyebilir. Bunun için aşağıdaki bağlantıyı farklı kaydet ile bilisayarınıza indirip açmanız önerilir. <br><br>
+  	<a id="report_link_json" href="/generated_report/">STİ bağlantısı (STIX Dosyası)</a></p><br>
+    <a id="report_link_txt" href="/generated_report/">STİ bağlantısı (Txt Dosyası)</a></p><br>
+    <a href="javascript:close_modal();">Kapat</a><br><br>
+</div>
+<table id="data_table" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                {% for item in columns %}
+                <th>{{ item }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                {% for item in columns %}
+                <th>{{ item }}</th>
+                {% endfor %}
+            </tr>
+        </tfoot>
+</table>
+<br>
+        </main>
+      </div>
+    </div>

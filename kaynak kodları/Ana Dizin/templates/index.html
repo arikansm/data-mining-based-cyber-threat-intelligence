@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="{{ url_for('static', filename='page_sources/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='page_sources/web-fonts-with-css/css/fontawesome-all.css') }}" rel="stylesheet">
+
+
+      <script type="text/javascript" src="{{ url_for('static', filename='page_sources/socket.io.min.js') }}"></script>
+      <script type="text/javascript" charset="utf-8">
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var print_control = true;
+            socket.on('connect', function() {
+                 console.log('connected with server');
+            });
+
+            socket.emit('homepage');
+
+            socket.on('print', function(data) {
+            	if(print_control == true){
+                    var output = document.getElementById('output');
+                    output.innerHTML += data['message'] + "<br>";
+                }
+            });
+            socket.on('page', function(data) {
+                if(data['message'] == 'interrupt')
+                    print_control = false;
+                else if(data['message'] == 'continue')
+                	print_control = true;
+            });
+      </script>
+
+    <title>Veri Madenciliği Temelli Siber Tehdit İstihbaratı</title>
+  </head>
+
+  <body cz-shortcut-listen="true" style="">
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a style="text-align: center;" class="navbar-brand col-md-12 mr-0" href="/">Veri Madenciliği Temelli Siber Tehdit İstihbaratı</a>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="/">
+                  <i class="fa fa-home"></i>
+                  &nbsp;Anasayfa
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/dm">
+                  <i class="fa fa-cogs"></i>
+                  &nbsp;Saldırı Tespit Sistemi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/db">
+                  <i class="fa fa-database"></i>
+                  &nbsp;Bilinmeyen Saldırı Kayıtları
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/traffic">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Gerçek Trafik Kayıtları
+                </a>
+              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/reports">
+                  <i class="fa fa-file-alt"></i>
+                  &nbsp;Siber Tehdit İstihbaratları
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Anasayfa</h1>
+          </div>
+<div id="output">
+</div>
+        </main>
+      </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='page_sources/jquery-3.2.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='page_sources/bootstrap.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='page_sources/Chart.min.js') }}"></script>
