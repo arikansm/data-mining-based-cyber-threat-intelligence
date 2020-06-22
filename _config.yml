@@ -3,3 +3,5 @@ description: Gazi Üniversitesi Bilişim Enstitüsü Adli Bilişim Bölümü- Y�
 show_downloads: true
 google_analytics: UA-170151314-1
 theme: jekyll-theme-cayman
+plugins:
+  - jekyll-sitemap
