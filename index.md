@@ -4,6 +4,8 @@ layout: default
 
 Kaynak kodları depoda sunulan ilgili teze, _Yükseköğretim Kurulu Başkanlığı Tez Merkezi_ üzerinden **596815** tez no ile ulaşılabilir. Ayrıca, [buradan](./Veri%20Madenciliği%20Temelli%20Siber%20Tehdit%20İstihbaratı%20-%20596815.pdf) da erişim sağlayabilirsiniz.
 
+Farklı çalışmalar için arikansm github kullanıcısına ait diğer depolara [buradan](https://github.com/arikansm?tab=repositories) ulaşabilirsiniz.
+
 # Veri Madenciliği Temelli Siber Tehdit İstihbaratı
 
 ## Özet
